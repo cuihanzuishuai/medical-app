@@ -1,0 +1,66 @@
+.loading {
+    @include position(fixed, 0, 0, 0, 0);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.3);
+    user-select: none;
+
+    .loading-container {
+        @include position(absolute, 0, 0, 0, 0);
+        @include size(56px);
+        margin: auto;
+
+        .loading-container__outer {
+            @include position(absolute, 0, 0, 0, 0);
+            @include size(56px);
+            border: 6px solid rgba(0, 229, 183, 0.9);
+            opacity: 0.9;
+            border-right-color: transparent;
+            border-left-color: transparent;
+            border-radius: 50%;
+            animation: spin-pulse 1s linear infinite normal;
+        }
+
+        .loading-container__inner {
+            @include size(36px);
+            @include position(absolute, 0, 0, 0, 0);
+            border: 6px solid rgba(0, 229, 183, 0.9);
+            opacity: 0.9;
+            border-left-color: transparent;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin-right 1s linear infinite normal;
+            margin: auto;
+        }
+    }
+}
+
+@keyframes spin-pulse {
+    from {
+        transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px rgba(0, 61, 76, 0.9);
+    }
+    50% {
+        transform: rotate(145deg);
+        opacity: 1;
+    }
+    to {
+        transform: rotate(-320deg);
+        opacity: 0;
+    }
+}
+
+@keyframes spin-right {
+    from {
+        transform: rotate(0deg);
+        opacity: 0.2;
+    }
+    50% {
+        transform: rotate(180deg);
+        opacity: 1.0;
+    }
+    to {
+        transform: rotate(360deg);
+        opacity: 0.2;
+    }
+}

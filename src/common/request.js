@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { baseURL, LOGIN_NAME } from '@/config'
 import { getToken, removeToken } from '@/common/auth'
-import { Modal } from 'ant-design-vue'
+import { showDialog } from 'vant'
+import 'vant/es/dialog/style'
 import Loading from '@/components/loading'
 import router from '@/router'
 
@@ -18,14 +19,14 @@ function addErrorLog (err) {
 }
 
 function onExpireToken (err) {
-    Modal.error({
+    showDialog({
         title: 'Error',
-        content: err.message,
-        onOk: () => {
+        message: err.message
+    })
+        .then(() => {
             removeToken()
             router.replace({ name: LOGIN_NAME })
-        }
-    })
+        })
 }
 
 const instance = axios.create({

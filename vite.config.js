@@ -18,8 +18,9 @@ export default defineConfig({
             libs: [{
                 libraryName: 'vant',
                 esModule: true,
+                ensureStyleFile: true, // 检查是否存在样式文件
                 resolveStyle: (name) => {
-                    return `vant/es/${ name }/style`
+                    return `../es/${ name }/style`
                 }
             }]
         })
