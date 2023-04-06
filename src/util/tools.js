@@ -33,3 +33,10 @@ export function isMillisecond (timeStamp) {
     return timeStr.length > 10
 }
 
+/**
+ * px 转 vw
+ */
+export function pxToVw (value) {
+    return `${ (100 / 750) * value }vw`
+}
+

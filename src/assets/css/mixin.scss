@@ -7,7 +7,7 @@ $text: #333333;
 // 次文本色
 $text-secondary: #666666;
 // 主字号
-$font-size: 14px;
+$font-size: 28px;
 // 图标
 $icon: #666666;
 // 背景
@@ -15,7 +15,7 @@ $background: #F2F5F8;
 // 边框
 $border: #DEE1E5;
 // 圆角
-$border-radius: 4px;
+$border-radius: 8px;
 // 失效 Disabled
 $disabled: #C1C2C5;
 // Error
@@ -27,7 +27,7 @@ $white: #FFF;
 // Black
 $black: #000;
 // 浮层阴影
-$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+$box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 
 /* 设置宽高 $width $height=$width */
 @mixin size($width, $height: $width) {

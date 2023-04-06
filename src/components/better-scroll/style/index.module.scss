@@ -1,0 +1,47 @@
+.scroll-wrap {
+    @include size(100%);
+    position: relative;
+    overflow: hidden;
+
+    .scroll-call {
+        @include position(absolute, 0, 0, 0, 0);
+        overflow: hidden;
+        background: $background;
+
+        .scroll-view {
+            position: relative;
+            width: 100%;
+            min-height: calc(100% + 88px);
+            padding-bottom: 88px;
+        }
+    }
+}
+
+.scroll-head {
+    @include size(100%, 88px);
+    @include position(absolute, -88px, 0, null, 0);
+    @include flex(center, center);
+    overflow: hidden;
+}
+
+.scroll-foot {
+    @include size(100%, 88px);
+    @include position(absolute, null, 0, 0, 0);
+    @include flex(center, center);
+    overflow: hidden;
+}
+
+.state-wrap {
+    @include flex(center, center);
+    overflow: hidden;
+
+    .state-icon__up {
+        transform: rotate(180deg);
+    }
+
+    .state-text {
+        height: 40px;
+        @include flex(center, center);
+        @include text($font-size, $text-secondary, 32px);
+    }
+}

@@ -1,0 +1,13 @@
+.view-wrap {
+    @include position(absolute, 0, 0, 0, 0);
+    @include size(100%);
+    overflow: hidden;
+}
+
+.login {
+    padding-top: 180px;
+
+    .button-wrap {
+        margin: 32px 32px 0;
+    }
+}
