@@ -41,6 +41,22 @@ const routes = [
         ]
     },
     {
+        path: '/report-form',
+        name: 'report-form',
+        meta: {
+            hideInMenu: true
+        },
+        component: () => import('@/views/report-form')
+    },
+    {
+        path: '/allocation-task',
+        name: 'allocation-task',
+        meta: {
+            hideInMenu: true
+        },
+        component: () => import('@/views/allocation-task')
+    },
+    {
         path: '/401',
         name: 'error-401',
         meta: {
