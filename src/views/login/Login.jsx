@@ -33,14 +33,14 @@ export default defineComponent({
                         router.push({ name: HOME_NAME })
                     } else {
                         showNotify({
-                            type: 'danger',
+                            type: 'warning',
                             message: '系统异常'
                         })
                     }
                 })
                 .catch((err) => {
                     showNotify({
-                        type: 'danger',
+                        type: 'warning',
                         message: err.message
                     })
                 })
