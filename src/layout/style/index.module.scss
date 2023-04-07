@@ -1,0 +1,28 @@
+.view-wrap {
+    @include position(absolute, 0, 0, 0, 0);
+    @include size(100%);
+    overflow: hidden;
+}
+
+.layout-main {
+    @include flex();
+    flex-direction: column;
+
+
+    .layout-content {
+        position: relative;
+        flex: 1;
+        overflow: hidden;
+
+        .content-space {
+            @include size(100%);
+            @include scroll-y;
+        }
+    }
+
+    .layout-footer {
+        position: relative;
+        @include size(100%, 100px);
+        overflow: hidden;
+    }
+}

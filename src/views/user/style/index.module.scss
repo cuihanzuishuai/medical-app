@@ -1,0 +1,31 @@
+.user-view {
+
+    .user-info {
+        position: relative;
+        @include size(100%, 375px);
+        overflow: hidden;
+
+        .user-avatar {
+            @include size(148px);
+            margin: 64px auto 0;
+            border-radius: 50%;
+            background: #ffffff;
+            overflow: hidden;
+
+            > img {
+                @include size(100%);
+                user-select: none;
+            }
+        }
+
+        .user-name {
+            @include text(28px, $text, 38px, center);
+            @include ellipsis-overflow;
+            margin-top: 32px;
+        }
+    }
+}
+
+.button-wrap {
+    padding: 64px 64px 0;
+}

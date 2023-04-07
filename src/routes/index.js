@@ -1,3 +1,6 @@
+import LayoutMain from '@/layout'
+import * as Role from '@/permission'
+
 /**
  * meta: {
  *  title: 导航栏title
@@ -19,11 +22,23 @@ const routes = [
     {
         path: '/',
         name: '_home',
-        component: () => import('@/views/Home'),
-        // redirect: { name: 'report-form' },
+        component: LayoutMain,
+        redirect: { name: 'worktable' },
         meta: {
             hideInMenu: true
-        }
+        },
+        children: [
+            {
+                path: 'worktable',
+                name: 'worktable',
+                component: () => import('@/views/worktable')
+            },
+            {
+                path: 'user',
+                name: 'user',
+                component: () => import('@/views/user')
+            }
+        ]
     },
     {
         path: '/401',

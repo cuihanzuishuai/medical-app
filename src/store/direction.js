@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { sessionCache } from '@/common/storage'
 import { on } from '@/util/dom'
 
-const PATH_LIST = ['/login', '/']
+const PATH_LIST = ['/login', '/worktable']
 
 PATH_LIST.forEach((path, index) => {
     sessionCache.set(path, String(index))
