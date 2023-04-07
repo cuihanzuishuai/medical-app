@@ -5,9 +5,21 @@
 }
 
 .login {
+    background-image: url('../images/login-bg.png');
+    background-color: $background;
+    background-size: cover;
+    background-position: 50%;
+    position: relative;
     padding-top: 180px;
 
-    .button-wrap {
-        margin: 32px 32px 0;
+    .form-wrap {
+        padding: 32px;
+        background: $white;
+        margin: 0 32px;
+        border-radius: 32px;
+
+        .button-wrap {
+            margin-top: 32px;
+        }
     }
 }

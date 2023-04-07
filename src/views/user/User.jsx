@@ -35,7 +35,7 @@ export default defineComponent({
                         </div>
                         <div class={ cx('user-name') }>{ userinfo.name }</div>
                     </div>
-                    <Cell title="修改密码" center={ true } isLink={ true }/>
+                    <Cell title="修改密码" isLink={ true }/>
                     <div class={ cx('button-wrap') }>
                         <Button round={ true } block={ true } onClick={ handleLogOut }>退出登录</Button>
                     </div>

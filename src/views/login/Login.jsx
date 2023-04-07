@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Form, Field, CellGroup, Button, showNotify } from 'vant'
+import { Form, Field, Button, showNotify } from 'vant'
 import { requestLogin } from '@/api/user'
 import { setToken } from '@/common/auth'
 import { HOME_NAME } from '@/config'
@@ -52,8 +52,8 @@ export default defineComponent({
         return () => {
             return (
                 <div class={ cx('view-wrap', 'login') }>
-                    <Form onSubmit={ onSubmit }>
-                        <CellGroup inset={ true }>
+                    <div class={ cx('form-wrap') }>
+                        <Form onSubmit={ onSubmit }>
                             <Field
                                 v-model={ loginForm.username }
                                 name="username"
@@ -69,19 +69,19 @@ export default defineComponent({
                                 placeholder="请输入"
                                 rules={ [{ required: true, message: '请输入密码' }] }
                             />
-                        </CellGroup>
-                        <div class={ cx('button-wrap') }>
-                            <Button
-                                round={ true }
-                                block={ true }
-                                type="primary"
-                                loading={ loading.value }
-                                native-type="submit"
-                            >
-                                登录
-                            </Button>
-                        </div>
-                    </Form>
+                            <div class={ cx('button-wrap') }>
+                                <Button
+                                    round={ true }
+                                    block={ true }
+                                    type="primary"
+                                    loading={ loading.value }
+                                    native-type="submit"
+                                >
+                                    登录
+                                </Button>
+                            </div>
+                        </Form>
+                    </div>
                 </div>
             )
         }
