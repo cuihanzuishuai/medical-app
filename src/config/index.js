@@ -8,7 +8,7 @@ export const recallExpires = 30
 export const scriptUrl = '//at.alicdn.com/t/c/font_3980375_cbczlwhxpvl.js'
 
 // 首页
-export const HOME_NAME = 'home'
+export const HOME_NAME = '_home'
 
 // 登录页
 export const LOGIN_NAME = 'login'

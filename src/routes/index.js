@@ -24,6 +24,30 @@ const routes = [
         meta: {
             hideInMenu: true
         }
+    },
+    {
+        path: '/401',
+        name: 'error-401',
+        meta: {
+            hideInMenu: true
+        },
+        component: () => import('@/views/error-page/401')
+    },
+    {
+        path: '/500',
+        name: 'error-500',
+        meta: {
+            hideInMenu: true
+        },
+        component: () => import('@/views/error-page/500')
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'error-404',
+        meta: {
+            hideInMenu: true
+        },
+        component: () => import('@/views/error-page/404')
     }
 ]
 

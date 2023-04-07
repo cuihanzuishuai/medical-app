@@ -1,0 +1,36 @@
+.error-page {
+    @include position(absolute, 0, 0, 0, 0);
+    @include size(100%);
+    background: $background;
+    overflow: hidden;
+}
+
+.content-con {
+    @include position(absolute, 50%, null, null, 50%);
+    @include size(600px, 514px);
+    transform: translate(-50%, -60%);
+
+    .error-img {
+        @include size(100%, 100%);
+    }
+
+    .text-con {
+        @include position(absolute, 0, null, null, 0);
+
+        .text-code {
+            @include position(absolute, 0, null, null, 0);
+            width: 600px;
+            @include text(80px, $primary, 100px, null, 700);
+        }
+
+        .text-desc {
+            @include position(absolute, 100px, null, null, 0);
+            width: 600px;
+            @include text(20px, $text-secondary, 32px, left, 700);
+        }
+    }
+
+    .back-btn-group {
+        @include position(absolute, null, 0, 0, null);
+    }
+}

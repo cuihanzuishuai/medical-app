@@ -2,11 +2,14 @@ import { defineStore } from 'pinia'
 import { sessionCache } from '@/common/storage'
 import { on } from '@/util/dom'
 
-const HOME_PATH = '/'
+const PATH_LIST = ['/login', '/']
 
-sessionCache.set(HOME_PATH, '0')
+PATH_LIST.forEach((path, index) => {
+    sessionCache.set(path, String(index))
+})
+
 const count = sessionCache.get('count')
-let historyCount = count ? parseInt(count) : 0
+let historyCount = count ? parseInt(count) : (PATH_LIST.length - 1)
 let isTouchStart = false
 let endTime = Date.now()
 
@@ -39,7 +42,7 @@ const useDirection = defineStore('direction', {
             } else {
                 ++historyCount
                 sessionCache.set('count', String(historyCount))
-                toPath !== HOME_PATH && sessionCache.set(toPath, String(historyCount))
+                sessionCache.set(toPath, String(historyCount))
                 direction = 'forward'
             }
             if (toIndex && toIndex !== '0' && !isPush && (((Date.now() - endTime) < 377) || isTouchStart)) {

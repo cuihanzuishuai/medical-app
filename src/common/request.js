@@ -2,7 +2,6 @@ import axios from 'axios'
 import { baseURL, LOGIN_NAME } from '@/config'
 import { getToken, removeToken } from '@/common/auth'
 import { showDialog } from 'vant'
-import 'vant/es/dialog/style'
 import Loading from '@/components/loading'
 import router from '@/router'
 
@@ -19,12 +18,12 @@ function addErrorLog (err) {
 }
 
 function onExpireToken (err) {
+    removeToken()
     showDialog({
         title: 'Error',
         message: err.message
     })
         .then(() => {
-            removeToken()
             router.replace({ name: LOGIN_NAME })
         })
 }
