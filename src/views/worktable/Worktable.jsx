@@ -20,9 +20,11 @@ export default defineComponent({
 
         return () => {
             return (
-                <div>
-                    <Cell title="报单登记" isLink={ true } icon="bar-chart-o" onClick={ handleReportForm }/>
+                <div class={ cx('worktable-wrap') }>
+                    <Cell title="报单登记" isLink={ true } icon="plus" onClick={ handleReportForm }/>
+                    <Cell title="报单列表" isLink={ true } icon="bar-chart-o" onClick={ handleReportForm }/>
                     <Cell title="回访记录" isLink={ true } icon="service-o" onClick={ handleAllocationTask }/>
+                    <Cell title="工作量" isLink={ true } icon="orders-o" onClick={ handleAllocationTask }/>
                 </div>
             )
         }
