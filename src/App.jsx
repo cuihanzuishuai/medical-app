@@ -16,7 +16,6 @@ export default defineComponent({
 
         let innerHeight = window.innerHeight
         if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-            console.log(direction.value)
             window.addEventListener('focusout', () => {
                 window.scroll(0, 0)
             })

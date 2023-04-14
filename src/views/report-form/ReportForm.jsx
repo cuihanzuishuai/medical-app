@@ -3,6 +3,7 @@ import { Button, Field, Icon, NavBar, SwipeCell, Space, Empty, showNotify, Tag, 
 import DatePopup from '@/components/date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
+import PickerPopup from '@/components/picker-popup'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
@@ -14,6 +15,32 @@ import classNames from '@/common/classNamesBind'
 import styles from './style/index.module.scss'
 
 const cx = classNames.bind(styles)
+
+const MatchEnum = {
+    1: {
+        value: 1,
+        text: '已匹配',
+        color: 'blue'
+    },
+    2: {
+        value: 2,
+        text: '未匹配',
+        color: 'red'
+    }
+}
+
+const RelationTaskEnum = {
+    1: {
+        value: 1,
+        text: '已分配',
+        color: 'blue'
+    },
+    2: {
+        value: 2,
+        text: '未分配',
+        color: 'red'
+    }
+}
 
 const Card = defineComponent({
     props: {
@@ -61,6 +88,8 @@ const Card = defineComponent({
                     const flexStyles = {
                         flex: 1
                     }
+                    const matchData = MatchEnum[props.source.is_match] || (props.source.is_match ? MatchEnum['1'] : MatchEnum['2'])
+                    const relationTaskData = RelationTaskEnum[props.source.relation_task] || (props.source.relation_task ? RelationTaskEnum['1'] : RelationTaskEnum['2'])
                     return (
                         <div class={ cx('card-wrap') }>
                             {
@@ -77,10 +106,23 @@ const Card = defineComponent({
                                         <div>{ props.source.consumer_mobile }</div>
                                     </Space>
                                     <Space size={ pxToVw(16) }>
-                                        <Tag plain={ true } size="medium" type="primary">未匹配</Tag>
+                                        <Tag
+                                            plain={ true }
+                                            color={ matchData.color }
+                                            size="medium"
+                                            type="primary"
+                                        >
+                                            { matchData.text }
+                                        </Tag>
                                         {
                                             hasPermission ? (
-                                                <Tag plain={ true } size="medium" type="primary">未分配</Tag>
+                                                <Tag
+                                                    plain={ true }
+                                                    color={ relationTaskData.color }
+                                                    size="medium"
+                                                    type="primary">
+                                                    { relationTaskData.text }
+                                                </Tag>
                                             ) : null
                                         }
                                     </Space>
@@ -121,6 +163,7 @@ export default defineComponent({
         const scrollRef = ref(null)
         const searchRef = ref(null)
         const dateRef = ref(null)
+        const pickerRef = ref(null)
 
         const dataSource = ref([])
 
@@ -154,6 +197,15 @@ export default defineComponent({
             }
         }
 
+        function getEnumValue (text, enumData) {
+            if (!text) return 0
+            const list = Object.keys(enumData).map((key) => {
+                return enumData[key]
+            })
+            const result = list.find((_) => _.text === text)
+            return result ? result.value : 0
+        }
+
         function getDataSource () {
             const time = getStartAndEndTime(formData.creat_time)
             const data = {
@@ -162,7 +214,7 @@ export default defineComponent({
                 creat_end_time: time.endTime, // 报单结束时间
                 user_id: formData.user_id ? parseInt(formData.user_id) : 0,  // 员工id
                 user_name: formData.user_name, // 员工姓名
-                is_match: formData.is_match || 0, // 是否匹配
+                is_match: getEnumValue(formData.is_match, MatchEnum), // 是否匹配
                 relation_task: hasAccess([Role.Admin, Role.RoleCustomManager]),
                 page: {
                     current_page: pagination.current,
@@ -251,11 +303,18 @@ export default defineComponent({
             dateRef.value && dateRef.value.show()
         }
 
+        function onShowPickerPopup () {
+            pickerRef.value && pickerRef.value.show()
+        }
+
         return () => {
             const navBarSlots = {
                 right: () => <Icon name="search" size={ pxToVw(36) }/>
             }
             const hasPermission = hasAccess([Role.Admin, Role.RoleCustomManager])
+            const columns = Object.keys(MatchEnum).map((key) => {
+                return MatchEnum[key]
+            })
             return (
                 <div class={ cx('view-wrap', 'wrap-flex') }>
                     <NavBar
@@ -313,6 +372,7 @@ export default defineComponent({
                             v-model={ formData.is_match }
                             readonly={ true }
                             isLink={ true }
+                            onClick={ onShowPickerPopup }
                         />
                         <Field
                             label="客户电话"
@@ -326,6 +386,7 @@ export default defineComponent({
                         />
                     </SearchPopup>
                     <DatePopup ref={ dateRef } v-model:value={ formData.creat_time }/>
+                    <PickerPopup ref={ pickerRef } columns={ columns } v-model:value={ formData.is_match }/>
                 </div>
             )
         }

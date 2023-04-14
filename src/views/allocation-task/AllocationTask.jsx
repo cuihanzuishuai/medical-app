@@ -3,6 +3,7 @@ import { Button, Field, Icon, NavBar, SwipeCell, Space, Empty, showNotify, Tag }
 import DatePopup from '@/components/date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
+import PickerPopup from '@/components/picker-popup'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
@@ -13,6 +14,19 @@ import classNames from '@/common/classNamesBind'
 import styles from './style/index.module.scss'
 
 const cx = classNames.bind(styles)
+
+const FinishedEnum = {
+    1: {
+        value: 1,
+        text: '已完成',
+        color: 'blue'
+    },
+    2: {
+        value: 2,
+        text: '未完成',
+        color: 'red'
+    }
+}
 
 const Card = defineComponent({
     props: {
@@ -38,6 +52,7 @@ const Card = defineComponent({
                     const flexStyles = {
                         flex: 1
                     }
+                    const finishedData = FinishedEnum[props.source.is_finished] || (props.source.is_finished ? FinishedEnum['1'] : FinishedEnum['2'])
                     return (
                         <div class={ cx('card-wrap') }>
                             <div class={ cx('card') }>
@@ -47,7 +62,14 @@ const Card = defineComponent({
                                         <div>{ props.source.customer_mobile }</div>
                                     </Space>
                                     <Space size={ pxToVw(16) }>
-                                        <Tag plain={ true } size="medium" type="primary">未完成</Tag>
+                                        <Tag
+                                            plain={ true }
+                                            color={ finishedData.color }
+                                            size="medium"
+                                            type="primary"
+                                        >
+                                            { finishedData.text }
+                                        </Tag>
                                     </Space>
                                 </div>
                                 <div className={ cx('card-item') }>
@@ -80,6 +102,7 @@ export default defineComponent({
         const searchRef = ref(null)
         const finishDateRef = ref(null)
         const distributeDateRef = ref(null)
+        const pickerRef = ref(null)
 
         const dataSource = ref([])
 
@@ -112,6 +135,15 @@ export default defineComponent({
             }
         }
 
+        function getEnumValue (text, enumData) {
+            if (!text) return 0
+            const list = Object.keys(enumData).map((key) => {
+                return enumData[key]
+            })
+            const result = list.find((_) => _.text === text)
+            return result ? result.value : 0
+        }
+
         function getDataSource () {
             const distributeTime = getStartAndEndTime(formData.distribute_time)
             const finishTime = getStartAndEndTime(formData.finish_time)
@@ -119,7 +151,7 @@ export default defineComponent({
                 name: formData.name,
                 mobile: formData.mobile,
                 customer_mobile: formData.customer_mobile,
-                is_finished: formData.is_finished || 0,
+                is_finished: getEnumValue(formData.is_finished, FinishedEnum),
                 distribute_start_time: distributeTime.startTime,
                 distribute_end_time: distributeTime.endTime,
                 finish_start_time: finishTime.startTime,
@@ -214,10 +246,17 @@ export default defineComponent({
             distributeDateRef.value && distributeDateRef.value.show()
         }
 
+        function onShowPickerPopup () {
+            pickerRef.value && pickerRef.value.show()
+        }
+
         return () => {
             const navBarSlots = {
                 right: () => <Icon name="search" size={ pxToVw(36) }/>
             }
+            const columns = Object.keys(FinishedEnum).map((key) => {
+                return FinishedEnum[key]
+            })
             return (
                 <div class={ cx('view-wrap', 'wrap-flex') }>
                     <NavBar
@@ -265,6 +304,7 @@ export default defineComponent({
                             v-model={ formData.is_finished }
                             readonly={ true }
                             isLink={ true }
+                            onClick={ onShowPickerPopup }
                         />
                         <Field
                             label="客户手机号"
@@ -284,6 +324,7 @@ export default defineComponent({
                     </SearchPopup>
                     <DatePopup ref={ finishDateRef } v-model:value={ formData.finish_time }/>
                     <DatePopup ref={ distributeDateRef } v-model:value={ formData.distribute_time }/>
+                    <PickerPopup ref={ pickerRef } columns={ columns } v-model:value={ formData.is_finished }/>
                 </div>
             )
         }
