@@ -206,6 +206,7 @@ export default defineComponent({
         function onScrollDown (resolve, reject) {
             pagination.current = 1
             pagination.total = 0
+            selectedKeys.value = []
             getDataSource()
                 .then((list) => {
                     dataSource.value = [...list]

@@ -6,7 +6,6 @@ import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
 import { requestStatisticsCustomer } from '@/api/statistics'
-import dayjs from 'dayjs'
 import classNames from '@/common/classNamesBind'
 import styles from './style/index.module.scss'
 
@@ -20,16 +19,6 @@ const Card = defineComponent({
         }
     },
     setup (props, { emit }) {
-        function formatTime (value) {
-            const timeStr = String(value)
-            if ((timeStr.length === 13)) {
-                return dayjs(value).format('YYYY.MM.DD HH:mm')
-            } else if (timeStr.length === 10) {
-                return dayjs.unix(value).format('YYYY.MM.DD HH:mm')
-            }
-            return '--'
-        }
-
         return () => {
             const swipeCellSlots = {
                 default: () => {
