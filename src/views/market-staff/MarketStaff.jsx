@@ -1,15 +1,12 @@
-import { defineComponent, reactive, ref, onMounted, nextTick, computed } from 'vue'
-import { Button, Field, Icon, NavBar, SwipeCell, Space, Empty, showNotify, Tag, Checkbox } from 'vant'
-import DatePopup from '@/components/date-popup'
+import { defineComponent, reactive, ref, onMounted, nextTick } from 'vue'
+import { Field, Icon, NavBar, SwipeCell, Space, Empty, showNotify } from 'vant'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
-import { requestReportList } from '@/api/report'
+import { requestStatisticsMarket } from '@/api/statistics'
 import dayjs from 'dayjs'
-import hasAccess from '@/permission/hasAccess'
-import * as Role from '@/permission'
 import classNames from '@/common/classNamesBind'
 import styles from './style/index.module.scss'
 
@@ -20,18 +17,9 @@ const Card = defineComponent({
         source: {
             type: Object,
             default: () => ({})
-        },
-        selectedKeys: {
-            type: Array,
-            default: () => ([])
         }
     },
-    emits: ['update:selectedKeys'],
     setup (props, { emit }) {
-        const checked = computed(() => {
-            return props.selectedKeys.indexOf(props.source.key) > -1
-        })
-
         function formatTime (value) {
             const timeStr = String(value)
             if ((timeStr.length === 13)) {
@@ -42,20 +30,7 @@ const Card = defineComponent({
             return '--'
         }
 
-        function onChange () {
-            const index = props.selectedKeys.indexOf(props.source.key)
-            const nextList = [...props.selectedKeys]
-            if (index === -1) {
-                nextList.push(props.source.key)
-            } else {
-                nextList.splice(index, 1)
-            }
-            emit('update:selectedKeys', nextList)
-        }
-
         return () => {
-            const hasPermission = hasAccess([Role.Admin, Role.RoleCustomManager])
-
             const swipeCellSlots = {
                 default: () => {
                     const flexStyles = {
@@ -63,51 +38,24 @@ const Card = defineComponent({
                     }
                     return (
                         <div class={ cx('card-wrap') }>
-                            {
-                                hasPermission ? (
-                                    <div class={ cx('card-checkbox') }>
-                                        <Checkbox checked={ checked.value } onClick={ onChange }/>
-                                    </div>
-                                ) : null
-                            }
                             <div class={ cx('card') }>
                                 <div class={ cx('card-item') }>
                                     <Space size={ pxToVw(16) } align="center">
-                                        <div class={ cx('title') }>{ props.source.consumer_name }</div>
-                                        <div>{ props.source.consumer_mobile }</div>
+                                        <div class={ cx('title') }>{ props.source.user_name }</div>
+                                        <div>{ props.source.user_mobile }</div>
                                     </Space>
-                                    <Space size={ pxToVw(16) }>
-                                        <Tag plain={ true } size="medium" type="primary">未匹配</Tag>
-                                        {
-                                            hasPermission ? (
-                                                <Tag plain={ true } size="medium" type="primary">未分配</Tag>
-                                            ) : null
-                                        }
-                                    </Space>
-                                </div>
-                                <div class={ cx('card-item') }>
-                                    <div class={ cx('subtitle') }>
-                                        预计到访时间：{ formatTime(props.source.except_arrive_time) }
-                                    </div>
                                 </div>
                                 <div class={ cx('card-item') }>
                                     <div class={ cx('subtitle') } style={ flexStyles }>
-                                        员工名称：{ props.source.user_name }
+                                        总任务数：{ props.source.total_num }
                                     </div>
-                                    {
-                                        hasPermission ? (
-                                            <div class={ cx('subtitle') } style={ flexStyles }>
-                                                客服名称：{ props.source.relation_task_username }
-                                            </div>
-                                        ) : null
-                                    }
+                                    <div class={ cx('subtitle') } style={ flexStyles }>
+                                        完成任务数：{ props.source.finish_num }
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     )
-                },
-                right: () => {
-                    return <Button class={ cx('delete-button') } type="danger" square={ true }>撤销</Button>
                 }
             }
             return <SwipeCell v-slots={ swipeCellSlots }/>
@@ -120,16 +68,12 @@ export default defineComponent({
         const router = useRouter()
         const scrollRef = ref(null)
         const searchRef = ref(null)
-        const dateRef = ref(null)
 
         const dataSource = ref([])
 
         const formData = reactive({
-            consumer_mobile: '', // 客户电话
-            creat_time: '', // 报单开始时间 // 报单结束时间
-            user_name: '', // 员工姓名
-            user_id: '', // 员工ID
-            is_match: '' // 是否匹配
+            mobile: '', // 员工手机号
+            name: '' // 员工姓名
         })
 
         const pagination = reactive({
@@ -138,32 +82,16 @@ export default defineComponent({
             total: 0
         })
 
-        const selectedKeys = ref([])
-
         onMounted(() => {
             nextTick(() => {
                 onFinish()
             })
         })
 
-        function getStartAndEndTime (times) {
-            const [startTime, endTime] = times ? times.split('~') : []
-            return {
-                startTime: startTime ? dayjs(startTime, 'YYYY/MM/DD').startOf('day').unix() : 0,
-                endTime: endTime ? dayjs(endTime, 'YYYY/MM/DD').endOf('day').unix() : 0
-            }
-        }
-
         function getDataSource () {
-            const time = getStartAndEndTime(formData.creat_time)
             const data = {
-                consumer_mobile: formData.consumer_mobile,
-                create_start_time: time.startTime,// 报单开始时间
-                creat_end_time: time.endTime, // 报单结束时间
-                user_id: formData.user_id ? parseInt(formData.user_id) : 0,  // 员工id
-                user_name: formData.user_name, // 员工姓名
-                is_match: formData.is_match || 0, // 是否匹配
-                relation_task: hasAccess([Role.Admin, Role.RoleCustomManager]),
+                mobile: formData.mobile,
+                name: formData.name,
                 page: {
                     current_page: pagination.current,
                     page_size: pagination.pageSize
@@ -171,7 +99,7 @@ export default defineComponent({
             }
             Loading()
             return new Promise((resolve, reject) => {
-                requestReportList(data)
+                requestStatisticsMarket(data)
                     .then((res) => {
                         const dataList = res.list.map((item) => {
                             return {
@@ -246,19 +174,14 @@ export default defineComponent({
             searchRef.value && searchRef.value.show()
         }
 
-        function onShowDatePopup () {
-            dateRef.value && dateRef.value.show()
-        }
-
         return () => {
             const navBarSlots = {
                 right: () => <Icon name="search" size={ pxToVw(36) }/>
             }
-            const hasPermission = hasAccess([Role.Admin, Role.RoleCustomManager])
             return (
                 <div class={ cx('view-wrap', 'wrap-flex') }>
                     <NavBar
-                        title="报单列表"
+                        title="市场部工作量"
                         leftArrow={ true }
                         onClickLeft={ onBackPrev }
                         onClickRight={ onShowSearchPopup }
@@ -270,11 +193,7 @@ export default defineComponent({
                                 dataSource.value.length !== 0 ? (
                                     dataSource.value.map((item) => {
                                         return (
-                                            <Card
-                                                source={ item }
-                                                v-model:selectedKeys={ selectedKeys.value }
-                                                key={ item.key }
-                                            />
+                                            <Card source={ item } key={ item.key }/>
                                         )
                                     })
                                 ) : (
@@ -283,48 +202,18 @@ export default defineComponent({
                             }
                         </BetterScroll>
                     </div>
-                    {
-                        hasPermission ? (
-                            <div class={ cx('footer-bar') }>
-                                <div/>
-                                <Button
-                                    type="primary"
-                                    size="small"
-                                    disabled={ selectedKeys.value.length === 0 }
-                                >
-                                    分配
-                                </Button>
-                            </div>
-                        ) : null
-                    }
                     <SearchPopup ref={ searchRef } onFinish={ onFinish } onReset={ onReset }>
                         <Field
-                            label="报单时间"
-                            placeholder="请选择"
-                            v-model={ formData.creat_time }
-                            readonly={ true }
-                            isLink={ true }
-                            onClick={ onShowDatePopup }
-                        />
-                        <Field
-                            label="是否匹配"
-                            placeholder="请选择"
-                            v-model={ formData.is_match }
-                            readonly={ true }
-                            isLink={ true }
-                        />
-                        <Field
-                            label="客户电话"
+                            label="员工姓名"
                             placeholder="请输入"
-                            v-model={ formData.consumer_mobile }
+                            v-model={ formData.name }
                         />
                         <Field
-                            label="员工ID"
+                            label="员工手机号"
                             placeholder="请输入"
-                            v-model={ formData.user_id }
+                            v-model={ formData.mobile }
                         />
                     </SearchPopup>
-                    <DatePopup ref={ dateRef } v-model:value={ formData.creat_time }/>
                 </div>
             )
         }

@@ -154,7 +154,8 @@ export default defineComponent({
         function onPullingDown () {
             scrollStatus.downState = DownStatus.LOADING
 
-            function onFulfilled (result) {
+            function onFulfilled (hasTotal) {
+                const result = isFunction(hasTotal) ? hasTotal() : !!hasTotal
                 scrollStatus.surplus = result
                 scrollStatus.downState = DownStatus.FULFILLED
                 result ? onOpenPullUp() : onClosePullUp()
@@ -184,7 +185,8 @@ export default defineComponent({
             scrollStatus.pullUpLoad = false
             scrollStatus.upState = UpStatus.LOADING
 
-            function onFulfilled (result) {
+            function onFulfilled (hasTotal) {
+                const result = isFunction(hasTotal) ? hasTotal() : !!hasTotal
                 scrollStatus.surplus = result
                 scrollStatus.upState = UpStatus.READYING
                 onPullUpLoad(result)

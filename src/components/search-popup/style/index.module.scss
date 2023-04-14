@@ -1,0 +1,31 @@
+.form-wrap {
+    @include size(100%);
+    @include flex;
+    flex-direction: column;
+
+    .header-wrap {
+        @include size(100%, 22px);
+    }
+
+    .field-wrap {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .button-wrap {
+        @include flex(center, center);
+        padding: 20px 32px;
+
+        .button {
+            flex: 1;
+
+            &.button__left {
+                border-radius: 100px 0 0 100px;
+            }
+
+            &.button__right {
+                border-radius: 0 100px 100px 0;
+            }
+        }
+    }
+}

@@ -14,9 +14,6 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/login')
     },
     {
@@ -24,9 +21,6 @@ const routes = [
         name: '_home',
         component: LayoutMain,
         redirect: { name: 'worktable' },
-        meta: {
-            hideInMenu: true
-        },
         children: [
             {
                 path: 'worktable',
@@ -43,41 +37,42 @@ const routes = [
     {
         path: '/report-form',
         name: 'report-form',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/report-form')
     },
     {
         path: '/allocation-task',
         name: 'allocation-task',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/allocation-task')
+    },
+    {
+        path: '/market-staff',
+        name: 'market-staff',
+        meta: {
+            access: [Role.Admin, Role.RoleMarketManager]
+        },
+        component: () => import('@/views/market-staff')
+    },
+    {
+        path: '/customer-staff',
+        name: 'customer-staff',
+        meta: {
+            access: [Role.Admin, Role.RoleCustomManager]
+        },
+        component: () => import('@/views/customer-staff')
     },
     {
         path: '/401',
         name: 'error-401',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/error-page/401')
     },
     {
         path: '/500',
         name: 'error-500',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/error-page/500')
     },
     {
         path: '/:pathMatch(.*)*',
         name: 'error-404',
-        meta: {
-            hideInMenu: true
-        },
         component: () => import('@/views/error-page/404')
     }
 ]

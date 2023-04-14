@@ -10,9 +10,9 @@
     background-size: cover;
     background-position: 50%;
     position: relative;
-    padding-top: 180px;
 
     .form-wrap {
+        @include position(absolute, 180px, 0, null, 0);
         padding: 32px;
         background: $white;
         margin: 0 32px;
