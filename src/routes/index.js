@@ -35,6 +35,11 @@ const routes = [
         ]
     },
     {
+        path: '/register-form',
+        name: 'register-form',
+        component: () => import('@/views/register-form')
+    },
+    {
         path: '/report-form',
         name: 'report-form',
         component: () => import('@/views/report-form')

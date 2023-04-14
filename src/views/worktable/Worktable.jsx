@@ -12,6 +12,10 @@ export default defineComponent({
     setup () {
         const router = useRouter()
 
+        function handleRegisterForm () {
+            router.push({ name: 'register-form' })
+        }
+
         function handleReportForm () {
             router.push({ name: 'report-form' })
         }
@@ -31,7 +35,7 @@ export default defineComponent({
         return () => {
             return (
                 <div class={ cx('worktable-wrap') }>
-                    <Cell title="报单登记" isLink={ true } icon="plus" onClick={ handleReportForm }/>
+                    <Cell title="报单登记" isLink={ true } icon="plus" onClick={ handleRegisterForm }/>
                     <Cell title="报单列表" isLink={ true } icon="bar-chart-o" onClick={ handleReportForm }/>
                     <Cell title="回访记录" isLink={ true } icon="service-o" onClick={ handleAllocationTask }/>
                     {
