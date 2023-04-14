@@ -72,8 +72,8 @@ const Card = defineComponent({
                                         </Tag>
                                     </Space>
                                 </div>
-                                <div className={ cx('card-item') }>
-                                    <div className={ cx('subtitle') }>
+                                <div class={ cx('card-item') }>
+                                    <div class={ cx('subtitle') }>
                                         消费金额：{ formatCurrency(props.source.customer_amount / 100) }
                                     </div>
                                 </div>
