@@ -1,5 +1,17 @@
 import { defineComponent, reactive, ref, onMounted, nextTick, computed } from 'vue'
-import { Button, Field, Icon, NavBar, SwipeCell, Space, Empty, showNotify, Tag, Checkbox } from 'vant'
+import {
+    Button,
+    Field,
+    Icon,
+    NavBar,
+    SwipeCell,
+    Space,
+    Empty,
+    showNotify,
+    Tag,
+    Checkbox,
+    showConfirmDialog
+} from 'vant'
 import DatePopup from '@/components/date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
@@ -7,7 +19,7 @@ import PickerPopup from '@/components/picker-popup'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
-import { requestReportList } from '@/api/report'
+import { requestReportList, requestReportRecover } from '@/api/report'
 import dayjs from 'dayjs'
 import hasAccess from '@/permission/hasAccess'
 import * as Role from '@/permission'
@@ -53,7 +65,7 @@ const Card = defineComponent({
             default: () => ([])
         }
     },
-    emits: ['update:selectedKeys'],
+    emits: ['update:selectedKeys', 'delete'],
     setup (props, { emit }) {
         const checked = computed(() => {
             return props.selectedKeys.indexOf(props.source.key) > -1
@@ -67,6 +79,39 @@ const Card = defineComponent({
                 return dayjs.unix(value).format('YYYY.MM.DD HH:mm')
             }
             return '--'
+        }
+
+        function onReportRecover () {
+            const data = {
+                id: props.source.id
+            }
+            Loading()
+            requestReportRecover(data)
+                .then(() => {
+                    showNotify({
+                        type: 'primary',
+                        message: '撤销成功'
+                    })
+                    emit('delete')
+                })
+                .catch((err) => {
+                    showNotify({
+                        type: 'warning',
+                        message: err.message
+                    })
+                })
+                .finally(() => {
+                    Loading.destroy()
+                })
+        }
+
+        function onDelete () {
+            showConfirmDialog({
+                message: '确定要撤销？'
+            })
+                .then(() => {
+                    onReportRecover()
+                })
         }
 
         function onChange () {
@@ -149,7 +194,16 @@ const Card = defineComponent({
                     )
                 },
                 right: () => {
-                    return <Button class={ cx('delete-button') } type="danger" square={ true }>撤销</Button>
+                    return (
+                        <Button
+                            class={ cx('delete-button') }
+                            type="danger"
+                            square={ true }
+                            onClick={ onDelete }
+                        >
+                            撤销
+                        </Button>
+                    )
                 }
             }
             return <SwipeCell v-slots={ swipeCellSlots }/>
@@ -334,6 +388,7 @@ export default defineComponent({
                                                 source={ item }
                                                 v-model:selectedKeys={ selectedKeys.value }
                                                 key={ item.key }
+                                                onDelete={ onFinish }
                                             />
                                         )
                                     })
