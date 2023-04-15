@@ -1,0 +1,77 @@
+.view-wrap {
+    @include position(absolute, 0, 0, 0, 0);
+    @include size(100%);
+    overflow: hidden;
+}
+
+.wrap-flex {
+    @include flex;
+    flex-direction: column;
+}
+
+.scroll-wrap {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+}
+
+.footer-bar {
+    position: relative;
+    @include flex(center, space-between);
+    @include size(100%, 100px);
+    background: $white;
+    padding: 0 32px;
+
+    &:after {
+        @include position(absolute, -50%, -50%, -50%, -50%);
+        content: " ";
+        pointer-events: none;
+        border-top: 1px solid $border;
+        transform: scale(0.5);
+    }
+}
+
+// Card
+.card-wrap {
+    @include flex(center);
+    position: relative;
+    padding: 20px 32px;
+
+    &:after {
+        @include position(absolute, null, 0, 0, 0);
+        content: " ";
+        pointer-events: none;
+        border-bottom: 1px solid $border;
+        transform: scaleY(.5);
+    }
+
+    .card-checkbox {
+        padding-right: 20px;
+    }
+
+    .card {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .card-item {
+        @include flex(center, space-between);
+        @include text(28px, $text, 36px);
+        @include ellipsis-overflow;
+        padding: 8px 0;
+
+        .title {
+            @include text(36px, $text, 48px);
+            @include ellipsis-overflow;
+        }
+
+        .subtitle {
+            @include text(28px, $text-secondary, 36px);
+            @include ellipsis-overflow;
+        }
+    }
+}
+
+.delete-button {
+    height: 100%;
+}
