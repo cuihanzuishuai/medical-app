@@ -26,8 +26,29 @@
         @include position(absolute, -50%, -50%, -50%, -50%);
         content: " ";
         pointer-events: none;
-        border-top: 1px solid $border;
+        border-bottom: 1px solid $border;
         transform: scale(0.5);
+    }
+}
+
+.checkbox-all {
+    :global(.van-badge__wrapper) {
+        border-radius: 4px;
+    }
+
+    &.indeterminate {
+        :global(.van-checkbox__icon) {
+            position: relative;
+
+            &:after {
+                content: " ";
+                @include position(absolute, 0, 0, 0, 0);
+                @include size(20px);
+                margin: auto;
+                border-radius: 4px;
+                background: $primary;
+            }
+        }
     }
 }
 

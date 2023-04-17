@@ -237,6 +237,11 @@ export default defineComponent({
 
         const selectedKeys = ref([])
 
+        const checkAll = computed(() => {
+            return selectedKeys.value.length === dataSource.value.length && dataSource.value.length !== 0
+
+        })
+
         onMounted(() => {
             nextTick(() => {
                 onFinish()
@@ -361,6 +366,16 @@ export default defineComponent({
             pickerRef.value && pickerRef.value.show()
         }
 
+        function handleCheckboxAll () {
+            if (selectedKeys.value.length === dataSource.value.length) {
+                selectedKeys.value = []
+            } else {
+                selectedKeys.value = dataSource.value.map((item) => {
+                    return item.key
+                })
+            }
+        }
+
         return () => {
             const navBarSlots = {
                 right: () => <Icon name="search" size={ pxToVw(36) }/>
@@ -368,6 +383,10 @@ export default defineComponent({
             const hasPermission = hasAccess([Role.Admin, Role.RoleCustomManager])
             const columns = Object.keys(MatchEnum).map((key) => {
                 return MatchEnum[key]
+            })
+
+            const checkboxClassNames = cx('checkbox-all', {
+                'indeterminate': selectedKeys.value.length !== 0 && selectedKeys.value.length !== dataSource.value.length
             })
             return (
                 <div class={ cx('view-wrap', 'wrap-flex') }>
@@ -378,6 +397,28 @@ export default defineComponent({
                         onClickRight={ onShowSearchPopup }
                         v-slots={ navBarSlots }
                     />
+                    {
+                        hasPermission ? (
+                            <div class={ cx('footer-bar') }>
+                                <Checkbox
+                                    class={ checkboxClassNames }
+                                    shape="square"
+                                    checked={ checkAll.value }
+                                    disabled={ dataSource.value.length === 0 }
+                                    onClick={ handleCheckboxAll }
+                                >
+                                    全选
+                                </Checkbox>
+                                <Button
+                                    type="primary"
+                                    size="small"
+                                    disabled={ selectedKeys.value.length === 0 }
+                                >
+                                    分配
+                                </Button>
+                            </div>
+                        ) : null
+                    }
                     <div class={ cx('scroll-wrap') }>
                         <BetterScroll ref={ scrollRef } onDown={ onScrollDown } onUp={ onScrollUp }>
                             {
@@ -398,20 +439,6 @@ export default defineComponent({
                             }
                         </BetterScroll>
                     </div>
-                    {
-                        hasPermission ? (
-                            <div class={ cx('footer-bar') }>
-                                <div/>
-                                <Button
-                                    type="primary"
-                                    size="small"
-                                    disabled={ selectedKeys.value.length === 0 }
-                                >
-                                    分配
-                                </Button>
-                            </div>
-                        ) : null
-                    }
                     <SearchPopup ref={ searchRef } onFinish={ onFinish } onReset={ onReset }>
                         <Field
                             label="报单时间"
