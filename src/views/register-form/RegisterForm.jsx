@@ -1,7 +1,6 @@
 import { defineComponent, reactive, ref } from 'vue'
 import { Field, Form, NavBar, showNotify, Button, showConfirmDialog } from 'vant'
 import TimePopup from '@/components/time-popup'
-import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { requestReportCreate } from '@/api/report'
 import dayjs from 'dayjs'
@@ -24,13 +23,12 @@ export default defineComponent({
         })
 
         function onCreateReport () {
-            console.log(formData.except_arrive_time)
             const data = {
                 consumer_mobile: formData.consumer_mobile,
                 consumer_name: formData.consumer_name,
                 expect_arrive_time: formData.except_arrive_time ? dayjs(formData.except_arrive_time, 'YYYY/MM/DD HH:mm').unix() : 0
             }
-            Loading()
+            loading.value = true
             requestReportCreate(data)
                 .then((res) => {
                     showNotify({
@@ -46,7 +44,7 @@ export default defineComponent({
                     })
                 })
                 .finally(() => {
-                    Loading.destroy()
+                    loading.value = false
                 })
         }
 

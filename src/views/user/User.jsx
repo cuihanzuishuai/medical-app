@@ -16,9 +16,13 @@ export default defineComponent({
 
         const userinfo = useUserinfo()
 
+        function handleChangePassword () {
+            router.push({ name: 'security' })
+        }
+
         function handleLogOut () {
             showConfirmDialog({
-                message: '确认退出登录吗？',
+                message: '确认退出登录吗？'
             })
                 .then(() => {
                     removeToken()
@@ -35,7 +39,7 @@ export default defineComponent({
                         </div>
                         <div class={ cx('user-name') }>{ userinfo.name }</div>
                     </div>
-                    <Cell title="修改密码" isLink={ true }/>
+                    <Cell title="修改密码" isLink={ true } onClick={ handleChangePassword }/>
                     <div class={ cx('button-wrap') }>
                         <Button round={ true } block={ true } onClick={ handleLogOut }>退出登录</Button>
                     </div>

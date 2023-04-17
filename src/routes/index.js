@@ -66,6 +66,11 @@ const routes = [
         component: () => import('@/views/customer-staff')
     },
     {
+        path: '/security',
+        name: 'security',
+        component: () => import('@/views/security')
+    },
+    {
         path: '/401',
         name: 'error-401',
         component: () => import('@/views/error-page/401')
