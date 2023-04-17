@@ -73,12 +73,14 @@ export default defineComponent({
                         <Form onSubmit={ onSubmit }>
                             <Field
                                 label="旧密码"
+                                type="password"
                                 placeholder="请输入旧密码"
                                 v-model={ formData.old_passwd }
                                 rules={ [{ required: true, message: '请输入旧密码' }] }
                             />
                             <Field
                                 label="新密码"
+                                type="password"
                                 placeholder="请输入新密码"
                                 v-model={ formData.new_passwd }
                                 rules={ [{ required: true, message: '请输入新密码' }] }
