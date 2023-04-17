@@ -16,6 +16,7 @@ import DatePopup from '@/components/date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
 import PickerPopup from '@/components/picker-popup'
+import SearchUser from './SearchUser'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
@@ -223,6 +224,7 @@ export default defineComponent({
         const searchRef = ref(null)
         const dateRef = ref(null)
         const pickerRef = ref(null)
+        const searchUserRef = ref(null)
 
         const dataSource = ref([])
 
@@ -381,6 +383,10 @@ export default defineComponent({
             }
         }
 
+        function handleServerDistribute () {
+            searchUserRef.value && searchUserRef.value.show(selectedKeys.value)
+        }
+
         return () => {
             const navBarSlots = {
                 right: () => <Icon name="search" size={ pxToVw(36) }/>
@@ -418,6 +424,7 @@ export default defineComponent({
                                     type="primary"
                                     size="small"
                                     disabled={ selectedKeys.value.length === 0 }
+                                    onClick={ handleServerDistribute }
                                 >
                                     分配
                                 </Button>
@@ -474,6 +481,7 @@ export default defineComponent({
                     </SearchPopup>
                     <DatePopup ref={ dateRef } v-model:value={ formData.creat_time }/>
                     <PickerPopup ref={ pickerRef } columns={ columns } v-model:value={ formData.is_match }/>
+                    <SearchUser ref={ searchUserRef } onFinish={ onFinish }/>
                 </div>
             )
         }

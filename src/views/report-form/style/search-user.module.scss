@@ -1,0 +1,9 @@
+.search-list {
+    height: 520px;
+    @include scroll-y;
+
+    .loading {
+        @include size(60px);
+        margin: 200px auto 0;
+    }
+}
