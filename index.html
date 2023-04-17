@@ -82,6 +82,16 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        if (typeof window !== undefined && typeof window.navigator !== undefined) {
+            if (!(/Android|webOS|iPhone|iPad|Windows Phone|iPod|BlackBerry|SymbianOS|Nokia|Mobile|Opera Mini/i.test(navigator.userAgent))) {
+                const origin = window.location.origin
+                window.location.href = `${ origin }`
+            }
+        }
+    })()
+</script>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

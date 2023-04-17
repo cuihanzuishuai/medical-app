@@ -4,9 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
 export default defineConfig({
-    server: {
-        host: '0.0.0.0',
-    },
+    base: '/app/',
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src')
@@ -22,5 +20,8 @@ export default defineConfig({
                 additionalData: '@import \'@/assets/css/mixin.scss\';'
             }
         }
+    },
+    build: {
+        outDir: 'app'
     }
 })

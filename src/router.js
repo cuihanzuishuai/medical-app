@@ -9,7 +9,7 @@ import useUserinfo from '@/store/userinfo'
 import routes from '@/routes'
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/app/'),
     routes: routes
 })
 
