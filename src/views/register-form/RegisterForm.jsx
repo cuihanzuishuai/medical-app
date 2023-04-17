@@ -1,5 +1,5 @@
 import { defineComponent, reactive, ref } from 'vue'
-import { Field, Form, NavBar, showNotify } from 'vant'
+import { Field, Form, NavBar, showNotify, Button, showConfirmDialog } from 'vant'
 import TimePopup from '@/components/time-popup'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
@@ -15,6 +15,8 @@ export default defineComponent({
         const router = useRouter()
         const timeRef = ref(null)
 
+        const loading = ref(false)
+
         const formData = reactive({
             consumer_mobile: '',
             consumer_name: '',
@@ -22,6 +24,7 @@ export default defineComponent({
         })
 
         function onCreateReport () {
+            console.log(formData.except_arrive_time)
             const data = {
                 consumer_mobile: formData.consumer_mobile,
                 consumer_name: formData.consumer_name,
@@ -44,6 +47,15 @@ export default defineComponent({
                 })
                 .finally(() => {
                     Loading.destroy()
+                })
+        }
+
+        function onSubmit () {
+            showConfirmDialog({
+                message: '确定无误并提交？'
+            })
+                .then(() => {
+                    onCreateReport()
                 })
         }
 
@@ -70,7 +82,7 @@ export default defineComponent({
                         onClickLeft={ onBackPrev }
                     />
                     <div class={ cx('scroll-wrap') }>
-                        <Form onSubmit={ onCreateReport }>
+                        <Form onSubmit={ onSubmit }>
                             <Field
                                 label="客户姓名"
                                 placeholder="请输入"
@@ -92,6 +104,17 @@ export default defineComponent({
                                 onClick={ onShowTimePopup }
                                 rules={ [{ required: true, message: '请选择到访时间' }] }
                             />
+                            <div class={ cx('button-wrap') }>
+                                <Button
+                                    round={ true }
+                                    block={ true }
+                                    type="primary"
+                                    loading={ loading.value }
+                                    native-type="submit"
+                                >
+                                    提交
+                                </Button>
+                            </div>
                         </Form>
                     </div>
                     <TimePopup ref={ timeRef } v-model:value={ formData.except_arrive_time }/>
