@@ -75,7 +75,7 @@ export default defineComponent({
             return (
                 <div class={ cx('view-wrap', 'wrap-flex') }>
                     <NavBar
-                        title="报表登记"
+                        title="报单登记"
                         leftArrow={ true }
                         onClickLeft={ onBackPrev }
                     />
