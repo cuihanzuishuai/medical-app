@@ -4,10 +4,11 @@ import DatePopup from '@/components/date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
 import PickerPopup from '@/components/picker-popup'
+import FollowUp from './FollowUp'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
-import { requestCustomerServerList, requestCustomerServerResult } from '@/api/customer'
+import { requestCustomerServerList } from '@/api/customer'
 import dayjs from 'dayjs'
 import { formatCurrency } from '@/util/format'
 import classNames from '@/common/classNamesBind'
@@ -35,6 +36,7 @@ const Card = defineComponent({
             default: () => ({})
         }
     },
+    emits: ['followUp'],
     setup (props, { emit }) {
         function formatTime (value) {
             const timeStr = String(value)
@@ -44,6 +46,10 @@ const Card = defineComponent({
                 return dayjs.unix(value).format('YYYY.MM.DD HH:mm')
             }
             return '--'
+        }
+
+        function onFollowUp () {
+            emit('followUp', props.source)
         }
 
         return () => {
@@ -87,7 +93,16 @@ const Card = defineComponent({
                     )
                 },
                 right: () => {
-                    return <Button class={ cx('delete-button') } type="primary" square={ true }>回访</Button>
+                    return (
+                        <Button
+                            class={ cx('delete-button') }
+                            type="primary"
+                            square={ true }
+                            onClick={ onFollowUp }
+                        >
+                            回访
+                        </Button>
+                    )
                 }
             }
             return <SwipeCell v-slots={ swipeCellSlots }/>
@@ -103,6 +118,7 @@ export default defineComponent({
         const finishDateRef = ref(null)
         const distributeDateRef = ref(null)
         const pickerRef = ref(null)
+        const followUpRef = ref(null)
 
         const dataSource = ref([])
 
@@ -220,6 +236,12 @@ export default defineComponent({
                 })
         }
 
+        function onFollowUp (record) {
+            return function () {
+                followUpRef.value && followUpRef.value.show(record)
+            }
+        }
+
         function onFinish () {
             scrollRef.value && scrollRef.value.onResetScroll(true)
         }
@@ -272,7 +294,7 @@ export default defineComponent({
                                 dataSource.value.length !== 0 ? (
                                     dataSource.value.map((item) => {
                                         return (
-                                            <Card source={ item } key={ item.key }/>
+                                            <Card source={ item } key={ item.key } onFollowUp={ onFollowUp(item) }/>
                                         )
                                     })
                                 ) : (
@@ -325,6 +347,7 @@ export default defineComponent({
                     <DatePopup ref={ finishDateRef } v-model:value={ formData.finish_time }/>
                     <DatePopup ref={ distributeDateRef } v-model:value={ formData.distribute_time }/>
                     <PickerPopup ref={ pickerRef } columns={ columns } v-model:value={ formData.is_finished }/>
+                    <FollowUp ref={ followUpRef } onFinish={ onFinish }/>
                 </div>
             )
         }
