@@ -31,23 +31,23 @@
     }
 }
 
-.checkbox-all {
+.checkbox {
     :global(.van-badge__wrapper) {
         border-radius: 4px;
     }
+}
 
-    &.indeterminate {
-        :global(.van-checkbox__icon) {
-            position: relative;
+.indeterminate {
+    :global(.van-checkbox__icon) {
+        position: relative;
 
-            &:after {
-                content: " ";
-                @include position(absolute, 0, 0, 0, 0);
-                @include size(20px);
-                margin: auto;
-                border-radius: 4px;
-                background: $primary;
-            }
+        &:after {
+            content: " ";
+            @include position(absolute, 0, 0, 0, 0);
+            @include size(20px);
+            margin: auto;
+            border-radius: 4px;
+            background: $primary;
         }
     }
 }

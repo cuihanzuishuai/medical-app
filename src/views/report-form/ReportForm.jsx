@@ -140,7 +140,12 @@ const Card = defineComponent({
                             {
                                 hasPermission ? (
                                     <div class={ cx('card-checkbox') }>
-                                        <Checkbox checked={ checked.value } onClick={ onChange }/>
+                                        <Checkbox
+                                            class={ cx('checkbox') }
+                                            shape="square"
+                                            checked={ checked.value }
+                                            onClick={ onChange }
+                                        />
                                     </div>
                                 ) : null
                             }
@@ -385,7 +390,7 @@ export default defineComponent({
                 return MatchEnum[key]
             })
 
-            const checkboxClassNames = cx('checkbox-all', {
+            const checkboxClassNames = cx('checkbox', {
                 'indeterminate': selectedKeys.value.length !== 0 && selectedKeys.value.length !== dataSource.value.length
             })
             return (
