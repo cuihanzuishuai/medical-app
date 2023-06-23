@@ -88,7 +88,24 @@
 
         .subtitle {
             @include text(28px, $text-secondary, 36px);
-            @include ellipsis-overflow;
+            // @include ellipsis-overflow;
+        }
+
+        .time-icon {
+            position: relative;
+            top: -10px;
+            color:#1989fa
+        }
+
+        .match-tag {
+            position: relative;
+        }
+        
+        .match-icon {
+            position: absolute;
+            top: -10px;
+            left: 95px;
+            color:#1989fa;
         }
     }
 }

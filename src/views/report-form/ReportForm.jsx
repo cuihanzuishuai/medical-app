@@ -13,6 +13,7 @@ import {
     showConfirmDialog
 } from 'vant'
 import DatePopup from '@/components/date-popup'
+import SingleDatePopup from '@/components/single-date-popup'
 import BetterScroll from '@/components/better-scroll'
 import SearchPopup from '@/components/search-popup'
 import PickerPopup from '@/components/picker-popup'
@@ -20,7 +21,7 @@ import SearchUser from './SearchUser'
 import Loading from '@/components/loading'
 import { useRouter } from 'vue-router'
 import { pxToVw } from '@/util/tools'
-import { requestReportList, requestReportRecover } from '@/api/report'
+import { requestReportList, requestReportRecover, requestEditReportTime, requestEditReportMatch } from '@/api/report'
 import dayjs from 'dayjs'
 import hasAccess from '@/permission/hasAccess'
 import * as Role from '@/permission'
@@ -41,6 +42,7 @@ const MatchEnum = {
         color: 'red'
     }
 }
+
 
 const RelationTaskEnum = {
     1: {
@@ -66,13 +68,13 @@ const Card = defineComponent({
             default: () => ([])
         }
     },
-    emits: ['update:selectedKeys', 'delete'],
-    setup (props, { emit }) {
+    emits: ['update:selectedKeys', 'delete', 'showSingleDatePopup', 'showMatchPopup'],
+    setup(props, { emit }) {
         const checked = computed(() => {
             return props.selectedKeys.indexOf(props.source.key) > -1
         })
 
-        function formatTime (value) {
+        function formatTime(value) {
             const timeStr = String(value)
             if ((timeStr.length === 13)) {
                 return dayjs(value).format('YYYY.MM.DD HH:mm')
@@ -82,7 +84,7 @@ const Card = defineComponent({
             return '--'
         }
 
-        function onReportRecover () {
+        function onReportRecover() {
             const data = {
                 id: props.source.id
             }
@@ -106,7 +108,15 @@ const Card = defineComponent({
                 })
         }
 
-        function onDelete () {
+        function onEditTime() {
+            emit('showSingleDatePopup', props.source.id)
+        }
+
+        function onEditMatch() {
+            emit('showMatchPopup', props.source.id)
+        }
+
+        function onDelete() {
             showConfirmDialog({
                 message: '确定要撤销？'
             })
@@ -115,7 +125,7 @@ const Card = defineComponent({
                 })
         }
 
-        function onChange () {
+        function onChange() {
             const index = props.selectedKeys.indexOf(props.source.key)
             const nextList = [...props.selectedKeys]
             if (index === -1) {
@@ -137,60 +147,64 @@ const Card = defineComponent({
                     const matchData = MatchEnum[props.source.is_match] || (props.source.is_match ? MatchEnum['1'] : MatchEnum['2'])
                     const relationTaskData = RelationTaskEnum[props.source.relation_task] || (props.source.relation_task ? RelationTaskEnum['1'] : RelationTaskEnum['2'])
                     return (
-                        <div class={ cx('card-wrap') }>
+                        <div class={cx('card-wrap')}>
                             {
                                 hasPermission ? (
-                                    <div class={ cx('card-checkbox') }>
+                                    <div class={cx('card-checkbox')}>
                                         <Checkbox
-                                            class={ cx('checkbox') }
+                                            class={cx('checkbox')}
                                             shape="square"
-                                            checked={ checked.value }
-                                            onClick={ onChange }
+                                            checked={checked.value}
+                                            onClick={onChange}
                                         />
                                     </div>
                                 ) : null
                             }
-                            <div class={ cx('card') }>
-                                <div class={ cx('card-item') }>
-                                    <Space size={ pxToVw(16) } align="center">
-                                        <div class={ cx('title') }>{ props.source.consumer_name }</div>
-                                        <div>{ props.source.consumer_mobile }</div>
+                            <div class={cx('card')}>
+                                <div class={cx('card-item')}>
+                                    <Space size={pxToVw(16)} align="center">
+                                        <div class={cx('title')}>{props.source.consumer_name}</div>
+                                        <div>{props.source.consumer_mobile}</div>
                                     </Space>
-                                    <Space size={ pxToVw(16) }>
+                                    <Space size={pxToVw(36)}  >
                                         <Tag
-                                            plain={ true }
-                                            color={ matchData.color }
+                                            plain={true}
+                                            color={matchData.color}
                                             size="medium"
                                             type="primary"
+                                            class={cx('match-tag')}
+                                            onClick={onEditMatch}
                                         >
-                                            { matchData.text }
+                                            {matchData.text}
+                                            <Icon name="setting-o" class={cx('match-icon')} size={pxToVw(26)} />
                                         </Tag>
                                         {
                                             hasPermission ? (
                                                 <Tag
-                                                    plain={ true }
-                                                    color={ relationTaskData.color }
+                                                    plain={true}
+                                                    color={relationTaskData.color}
                                                     size="medium"
                                                     type="primary">
-                                                    { relationTaskData.text }
+                                                    {relationTaskData.text}
                                                 </Tag>
                                             ) : null
                                         }
                                     </Space>
                                 </div>
-                                <div class={ cx('card-item') }>
-                                    <div class={ cx('subtitle') }>
-                                        预计到访时间：{ formatTime(props.source.except_arrive_time) }
+                                <div class={cx('card-item')}>
+                                    <div class={cx('subtitle')} onClick={onEditTime}>
+                                        预计到访时间：{formatTime(props.source.except_arrive_time)}
+                                        <Icon name="setting-o" class={cx('time-icon')} size={pxToVw(26)} />
                                     </div>
                                 </div>
-                                <div class={ cx('card-item') }>
-                                    <div class={ cx('subtitle') } style={ flexStyles }>
-                                        员工名称：{ props.source.user_name }
+                                <div class={cx('card-item')}>
+                                    <div class={cx('subtitle')} style={flexStyles}>
+                                        员工名称：{props.source.user_name}
                                     </div>
                                     {
                                         hasPermission ? (
-                                            <div class={ cx('subtitle') } style={ flexStyles }>
-                                                客服名称：{ props.source.relation_task_username }
+                                            <div class={cx('subtitle')} style={flexStyles}>
+                                                客服名称：{props.source.relation_task_username}
                                             </div>
                                         ) : null
                                     }
@@ -202,31 +216,36 @@ const Card = defineComponent({
                 right: () => {
                     return (
                         <Button
-                            class={ cx('delete-button') }
+                            class={cx('delete-button')}
                             type="danger"
-                            square={ true }
-                            onClick={ onDelete }
+                            square={true}
+                            onClick={onDelete}
                         >
                             撤销
                         </Button>
                     )
                 }
             }
-            return <SwipeCell v-slots={ swipeCellSlots }/>
+            return <SwipeCell v-slots={swipeCellSlots} />
         }
     }
 })
 
 export default defineComponent({
-    setup () {
+    setup() {
         const router = useRouter()
         const scrollRef = ref(null)
         const searchRef = ref(null)
         const dateRef = ref(null)
         const pickerRef = ref(null)
         const searchUserRef = ref(null)
+        const singleDateRef = ref(null)
+        const matchPickerRef = ref(null)
 
+        const date = ref(dayjs().format())
         const dataSource = ref([])
+
+        const current_id = ref(null)
 
         const formData = reactive({
             consumer_mobile: '', // 客户电话
@@ -255,7 +274,17 @@ export default defineComponent({
             })
         })
 
-        function getStartAndEndTime (times) {
+        function showSingleDatePopup(id) {
+            current_id.value = id
+            singleDateRef.value && singleDateRef.value.show()
+        }
+
+        function showMatchPopup(id) {
+            current_id.value = id
+            matchPickerRef.value && matchPickerRef.value.show()
+        }
+
+        function getStartAndEndTime(times) {
             const [startTime, endTime] = times ? times.split('~') : []
             return {
                 startTime: startTime ? dayjs(startTime, 'YYYY/MM/DD').startOf('day').unix() : 0,
@@ -263,7 +292,7 @@ export default defineComponent({
             }
         }
 
-        function getEnumValue (text, enumData) {
+        function getEnumValue(text, enumData) {
             if (!text) return 0
             const list = Object.keys(enumData).map((key) => {
                 return enumData[key]
@@ -272,7 +301,7 @@ export default defineComponent({
             return result ? result.value : 0
         }
 
-        function getDataSource () {
+        function getDataSource() {
             const time = getStartAndEndTime(formData.creat_time)
             const data = {
                 consumer_mobile: formData.consumer_mobile,
@@ -315,13 +344,13 @@ export default defineComponent({
             })
         }
 
-        function hasTotal () {
+        function hasTotal() {
             const { current, pageSize, total } = pagination
             if (total === 0) return true
             return current * pageSize < total
         }
 
-        function onScrollDown (resolve, reject) {
+        function onScrollDown(resolve, reject) {
             pagination.current = 1
             pagination.total = 0
             selectedKeys.value = []
@@ -335,7 +364,7 @@ export default defineComponent({
                 })
         }
 
-        function onScrollUp (resolve, reject) {
+        function onScrollUp(resolve, reject) {
             pagination.current += 1
             getDataSource()
                 .then((list) => {
@@ -347,33 +376,33 @@ export default defineComponent({
                 })
         }
 
-        function onFinish () {
+        function onFinish() {
             scrollRef.value && scrollRef.value.onResetScroll(true)
         }
 
-        function onReset () {
+        function onReset() {
             Object.keys(formData).forEach((key) => {
                 formData[key] = ''
             })
         }
 
-        function onBackPrev () {
+        function onBackPrev() {
             router.go(-1)
         }
 
-        function onShowSearchPopup () {
+        function onShowSearchPopup() {
             searchRef.value && searchRef.value.show()
         }
 
-        function onShowDatePopup () {
+        function onShowDatePopup() {
             dateRef.value && dateRef.value.show()
         }
 
-        function onShowPickerPopup () {
+        function onShowPickerPopup() {
             pickerRef.value && pickerRef.value.show()
         }
 
-        function handleCheckboxAll () {
+        function handleCheckboxAll() {
             if (selectedKeys.value.length === dataSource.value.length) {
                 selectedKeys.value = []
             } else {
@@ -383,13 +412,72 @@ export default defineComponent({
             }
         }
 
-        function handleServerDistribute () {
+        function handleServerDistribute() {
             searchUserRef.value && searchUserRef.value.show(selectedKeys.value)
+        }
+
+        function handleEditTime(time) {
+            const data = {
+                id: +current_id.value,
+                time: dayjs(time.value.join('-')).unix()
+            }
+            requestEditReportTime(data)
+                .then(() => {
+                    showNotify({
+                        type: 'primary',
+                        message: '修改成功'
+                    })
+                    getDataSource()
+                        .then((list) => {
+                            dataSource.value = [...list]
+                            resolve(hasTotal)
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('err: ', err);
+                    showNotify({
+                        type: 'warning',
+                        message: err.message
+                    })
+                })
+        }
+
+        function handleEditMatch(match) {
+            console.log('match: ', match);
+            const data = {
+                id: +current_id.value,
+                is_match: match === '已匹配' ? 1 : 2
+            }
+            requestEditReportMatch(data)
+                .then(() => {
+                    showNotify({
+                        type: 'primary',
+                        message: '修改成功'
+                    })
+                    getDataSource()
+                        .then((list) => {
+                            dataSource.value = [...list]
+                            resolve(hasTotal)
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('err: ', err);
+                    showNotify({
+                        type: 'warning',
+                        message: err.message
+                    })
+                })
         }
 
         return () => {
             const navBarSlots = {
-                right: () => <Icon name="search" size={ pxToVw(36) }/>
+                right: () => <Icon name="search" size={pxToVw(36)} />
             }
             const hasPermission = hasAccess([Role.Admin, Role.RoleCustomManager])
             const columns = Object.keys(MatchEnum).map((key) => {
@@ -400,88 +488,93 @@ export default defineComponent({
                 'indeterminate': selectedKeys.value.length !== 0 && selectedKeys.value.length !== dataSource.value.length
             })
             return (
-                <div class={ cx('view-wrap', 'wrap-flex') }>
+                <div class={cx('view-wrap', 'wrap-flex')}>
                     <NavBar
                         title="报单列表"
-                        leftArrow={ true }
-                        onClickLeft={ onBackPrev }
-                        onClickRight={ onShowSearchPopup }
-                        v-slots={ navBarSlots }
+                        leftArrow={true}
+                        onClickLeft={onBackPrev}
+                        onClickRight={onShowSearchPopup}
+                        v-slots={navBarSlots}
                     />
                     {
                         hasPermission ? (
-                            <div class={ cx('footer-bar') }>
+                            <div class={cx('footer-bar')}>
                                 <Checkbox
-                                    class={ checkboxClassNames }
+                                    class={checkboxClassNames}
                                     shape="square"
-                                    checked={ checkAll.value }
-                                    disabled={ dataSource.value.length === 0 }
-                                    onClick={ handleCheckboxAll }
+                                    checked={checkAll.value}
+                                    disabled={dataSource.value.length === 0}
+                                    onClick={handleCheckboxAll}
                                 >
                                     全选
                                 </Checkbox>
                                 <Button
                                     type="primary"
                                     size="small"
-                                    disabled={ selectedKeys.value.length === 0 }
-                                    onClick={ handleServerDistribute }
+                                    disabled={selectedKeys.value.length === 0}
+                                    onClick={handleServerDistribute}
                                 >
                                     分配
                                 </Button>
                             </div>
                         ) : null
                     }
-                    <div class={ cx('scroll-wrap') }>
-                        <BetterScroll ref={ scrollRef } onDown={ onScrollDown } onUp={ onScrollUp }>
+                    <div class={cx('scroll-wrap')}>
+                        <BetterScroll ref={scrollRef} onDown={onScrollDown} onUp={onScrollUp}>
                             {
                                 dataSource.value.length !== 0 ? (
                                     dataSource.value.map((item) => {
                                         return (
                                             <Card
-                                                source={ item }
-                                                v-model:selectedKeys={ selectedKeys.value }
-                                                key={ item.key }
-                                                onDelete={ onFinish }
+                                                source={item}
+                                                v-model:selectedKeys={selectedKeys.value}
+                                                key={item.key}
+                                                onDelete={onFinish}
+                                                onShowSingleDatePopup={showSingleDatePopup}
+                                                onShowMatchPopup={showMatchPopup}
                                             />
                                         )
                                     })
                                 ) : (
-                                    <Empty image="search" description="暂无数据"/>
+                                    <Empty image="search" description="暂无数据" />
                                 )
                             }
                         </BetterScroll>
                     </div>
-                    <SearchPopup ref={ searchRef } onFinish={ onFinish } onReset={ onReset }>
+
+                    <SingleDatePopup ref={singleDateRef} v-model:value={date.value} onConfirm={handleEditTime} />
+                    <PickerPopup ref={matchPickerRef} columns={columns} onConfirm={handleEditMatch} />
+                    <SearchPopup ref={searchRef} onFinish={onFinish} onReset={onReset}>
                         <Field
                             label="报单时间"
                             placeholder="请选择"
-                            v-model={ formData.creat_time }
-                            readonly={ true }
-                            isLink={ true }
-                            onClick={ onShowDatePopup }
+                            v-model={formData.creat_time}
+                            readonly={true}
+                            isLink={true}
+                            onClick={onShowDatePopup}
                         />
                         <Field
                             label="是否匹配"
                             placeholder="请选择"
-                            v-model={ formData.is_match }
-                            readonly={ true }
-                            isLink={ true }
-                            onClick={ onShowPickerPopup }
+                            v-model={formData.is_match}
+                            readonly={true}
+                            isLink={true}
+                            onClick={onShowPickerPopup}
                         />
                         <Field
                             label="客户电话"
                             placeholder="请输入"
-                            v-model={ formData.consumer_mobile }
+                            v-model={formData.consumer_mobile}
                         />
                         <Field
                             label="员工ID"
                             placeholder="请输入"
-                            v-model={ formData.user_id }
+                            v-model={formData.user_id}
                         />
                     </SearchPopup>
-                    <DatePopup ref={ dateRef } v-model:value={ formData.creat_time }/>
-                    <PickerPopup ref={ pickerRef } columns={ columns } v-model:value={ formData.is_match }/>
-                    <SearchUser ref={ searchUserRef } onFinish={ onFinish }/>
+                    <DatePopup ref={dateRef} v-model:value={formData.creat_time} />
+                    <PickerPopup ref={pickerRef} columns={columns} v-model:value={formData.is_match} />
+                    <SearchUser ref={searchUserRef} onFinish={onFinish} />
                 </div>
             )
         }

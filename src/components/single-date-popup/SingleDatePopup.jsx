@@ -1,12 +1,9 @@
 import { defineComponent, ref } from 'vue'
-import { Popup, Picker } from 'vant'
+import { Popup, DatePicker } from 'vant'
+import dayjs from 'dayjs'
 
 export default defineComponent({
     props: {
-        columns: {
-            type: Array,
-            default: () => ([])
-        },
         value: {
             type: String,
             default: ''
@@ -15,20 +12,20 @@ export default defineComponent({
     emits: ['update:value', 'confirm', 'cancel'],
     setup (props, { emit, expose }) {
         const visible = ref(false)
+        const date = ref(dayjs().format('YYYY-MM-DD').split('-'))
 
-        function onConfirm ({ selectedOptions }) {
-            const [option] = selectedOptions
-            emit('update:value', option.text)
-            emit('confirm', option.text)
+        function onConfirm () {
+            emit('update:value', date)
+            emit('confirm', date)
             visible.value = false
         }
 
         function onCancel () {
+            emit('cancel')
             visible.value = false
         }
 
         function show () {
-            emit('cancel')
             visible.value = true
         }
 
@@ -39,11 +36,7 @@ export default defineComponent({
         return () => {
             return (
                 <Popup v-model:show={ visible.value } position="bottom" close-on-click-overlay={false}>
-                    <Picker
-                        columns={ props.columns }
-                        onCancel={ onCancel }
-                        onConfirm={ onConfirm }
-                    />
+                    <DatePicker v-model={ date.value } onConfirm={ onConfirm } onCancel={ onCancel }/>
                 </Popup>
             )
         }

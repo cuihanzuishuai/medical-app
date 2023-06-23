@@ -49,6 +49,40 @@ export function requestReportList (data) {
 }
 
 /**
+ * 报单到访时间修改
+ * @returns {Promise<unknown>}
+ */
+ export function requestEditReportTime (data) {
+    return new Promise((resolve, reject) => {
+        request.post('/api/report/actual_arrived_time', data)
+            .then((res) => {
+                resolve(res.data)
+            })
+            .catch((err) => {
+                reject(err)
+            })
+    })
+}
+
+/**
+ * 报单匹配修改
+ * @returns {Promise<unknown>}
+ */
+ export function requestEditReportMatch (data) {
+    return new Promise((resolve, reject) => {
+        request.post('/api/report/match', data)
+            .then((res) => {
+                resolve(res.data)
+            })
+            .catch((err) => {
+                reject(err)
+            })
+    })
+}
+
+
+
+/**
  * 上传文件
  * @returns {Promise<unknown>}
  */
